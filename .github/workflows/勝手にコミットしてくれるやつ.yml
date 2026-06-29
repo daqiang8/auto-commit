@@ -1,27 +1,26 @@
-name: pseudo every second commit
+name: Run Node.js script
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
-  commit-loop:
+  run-node:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Loop commits every second (10 times demo)
-        run: |
-          git config user.name "qianyu15"
-          git config user.email "qianyuyangvip@gmail.com"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-          for i in {1..9996}; do
-            echo "tick: $(date -u +%Y-%m-%dT%H:%M:%S)" >> heartbeat.txt
+      - name: Install dependencies
+        run: npm install
 
-            git add heartbeat.txt
-            git commit -m "tick $i $(date -u +%H:%M:%S)" || true
-            git push || true
-
-            sleep 1
-          done
+      - name: Run script
+        run: node grass.js
